@@ -1,0 +1,736 @@
+{
+  "name": "01. Resumo Técnico Diário",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "# 📬 Resumo Técnico Diário pessoal sobre Tecnologia\n\n**O que faz:**\nSeleciona e envia automaticamente por e-mail um boletim informativo diário personalizado com as últimas notícias, ferramentas e produtos de tecnologia, adaptados aos seus interesses.\n\n**Como funciona:**\n1. É acionado diariamente às 8h\n2. Busca feeds RSS de suas fontes de tecnologia favoritas\n3. Usa a IA do Google Gemini para filtrar e selecionar conteúdo com base em seus interesses\n4. Envia um boletim informativo com formatação impecável para sua caixa de entrada\n\n**Personalizar:**\n- Alterar as fontes RSS nos nós dentro do quadro RSS Feed\n- Modificar palavras-chave/interesses no nó \"Analisar documento\"\n- Atualizar seu endereço de e-mail no nó \"Enviar e-mail\"\n- Ajustar o horário de agendamento no nó de gatilho\n- É possível usar a API GRATUITA do GEMINI para gerar o resumo.\n",
+        "height": 452,
+        "width": 920,
+        "color": 5
+      },
+      "id": "260e1231-aa61-49b4-ae77-bc91d6dc65d5",
+      "name": "Sticky Note - Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2192,
+        -592
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 📅 Trigger Diários\nConfigurado para rodar todos os dias as 08:00 da manhã.",
+        "height": 604,
+        "width": 280,
+        "color": 3
+      },
+      "id": "b09da377-974e-48ff-a487-6732193d2f06",
+      "name": "Sticky Note - Trigger",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2192,
+        -112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 📰 RSS Feed \nDefina quais feeds RSS monitorar para notícias e ferramentas de tecnologia.",
+        "height": 600,
+        "width": 280,
+        "color": 4
+      },
+      "id": "931c49f6-59f0-4023-8a8d-cc25c490afdc",
+      "name": "Sticky Note - Sources",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1856,
+        -112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\"url\" :  [\n  \"https://feeds.arstechnica.com/arstechnica/index\",\n  \"https://www.theverge.com/rss/index.xml\",\n  \"https://www.wired.com/feed/rss\",\n  \"https://www.technologyreview.com/topnews.rss\",\n  \"https://techcrunch.com/feed/\",\n  \"http://feeds.feedburner.com/canaltechbr\",\n  \"https://tecnoblog.net/feed/\",\n  \"https://www.inovacaotecnologica.com.br/boletim/rss.xml\",\n  \"https://www.sciencedaily.com/rss/top/technology.xml\"\n]}\n",
+        "options": {}
+      },
+      "id": "97dfa52e-fa7b-40b3-afcb-3fdd96b6e1ba",
+      "name": "Tech News Sites",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -1760,
+        32
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"Url\": [\n    \n      \"https://www.reddit.com/r/SideProject/.rss\",\n      \"https://www.reddit.com/r/InternetIsBeautiful/.rss\",\n      \"https://dev.to/feed/tag/tools\",\n      \"https://www.producthunt.com/feed\",\n      \"https://hnrss.org/launches\",\n      \"https://hnrss.org/show\",\n      \"https://techcrunch.com/tag/saas/feed\"\n    \n  ]\n}",
+        "options": {}
+      },
+      "id": "e4aed24b-d7ef-469b-8990-5bd8c2ce0b87",
+      "name": "Tools Subredit and Sites",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        -1760,
+        272
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "content": "## 🔄 Processamento do RSS Feed \nDividir, ler os feeds em lotes e buscar o conteúdo.",
+        "height": 828,
+        "width": 1092,
+        "color": 6
+      },
+      "id": "e8b38d9c-4597-4139-991f-4bf56759c4f7",
+      "name": "Sticky Note - Processing",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1536,
+        -112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {}
+      },
+      "id": "cc893c35-d387-4fde-a39f-556ce02564ce",
+      "name": "RSS Read OF Tech News",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "position": [
+        -1072,
+        144
+      ],
+      "typeVersion": 1.2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.Url }}",
+        "options": {}
+      },
+      "id": "53949459-792f-4a24-9d4a-3d390bfdf34f",
+      "name": "RSS Read OF Tools",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "position": [
+        -1040,
+        448
+      ],
+      "typeVersion": 1.2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## 📦 Combinar & Converter\nCombinado todos os feeds e convertido em CSV para AI",
+        "height": 600,
+        "width": 612,
+        "color": 2
+      },
+      "id": "c3d8250e-b180-4ab3-90b7-73fe1f3dfaba",
+      "name": "Sticky Note - Combine",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -400,
+        -112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 🤖 Curadoria de IA\nO Google Gemini analisa o conteúdo e seleciona os itens mais relevantes com base nos seus interesses.\n\n**Observação:** Altere as palavras-chave no campo de texto do nó **Analisar Documento** de acordo com seus interesses.\n\n",
+        "height": 600,
+        "width": 540,
+        "color": 7
+      },
+      "id": "d9f30509-fd7a-4494-94be-5ca9d2be90d4",
+      "name": "Sticky Note - AI",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        256,
+        -112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## 📧 Enviar Newsletter\n\nFormatar e enviar o boletim informativo personalizado.\n",
+        "height": 600,
+        "width": 632
+      },
+      "id": "990b56bd-f9ef-4816-81de-d14ccc8d7423",
+      "name": "Sticky Note - Email",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        848,
+        -112
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "f66a53df-8694-40ec-a343-a9df595276bf",
+      "name": "Envio Diário as 08h",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [
+        -2096,
+        144
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "url",
+        "options": {}
+      },
+      "id": "40fb68ae-37a5-4f1e-8234-60a4c339ec48",
+      "name": "Quebrar URLs News",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        -1456,
+        32
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "Url",
+        "options": {}
+      },
+      "id": "5ef21f59-7a39-40ff-b035-51b24729d72c",
+      "name": "Quebrar URLs Sites",
+      "type": "n8n-nodes-base.splitOut",
+      "position": [
+        -1472,
+        352
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {},
+      "id": "b31c98b7-9406-4a1d-adcb-b5811fe86c2c",
+      "name": "Unir as Listas",
+      "type": "n8n-nodes-base.merge",
+      "position": [
+        -160,
+        144
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "1df18070-16c7-4619-b95f-c19a39e03452",
+      "name": "Converter para CSV",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        64,
+        144
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "inputType": "binary"
+      },
+      "id": "c4353858-d2eb-4040-90e6-0c7270eb619e",
+      "name": "Subir Arquivo no Gemini",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "position": [
+        336,
+        144
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "viQN4w03VCLXcskl",
+          "name": "Google Gemini API - pauloroosf@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "document",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "=# Tech Content Writer Prompt\n\nYou are a tech content writer.\nI have two lists of items:\n1️⃣ Global Tech News\n{news_list}\n2️⃣ New Tools & Products\n{products_list}\n\n## Task:\n- Select the **top 10-15 items** from each list based on these interests and keywords:\n  - **Tools & Products Keywords:** [\"AI\", \"automation\", \"developer\", \"open source\", \"productivity\", \"creative\", \"innovation\", \"API\", \"web app\", \"tools\"]\n  - **News Keywords:** [\"technology innovation\", \"AI breakthrough\", \"framework\", \"developer update\", \"research\", \"automation trend\", \"product launch\"]\n- Keep **two separate sections**: \n  1. Global & Tech Innovations (10-15 items)\n  2. Tools & Products (10-15 items)\n- Summarize each item in **2-3 lines**.\n- **If an image URL is provided**, display it beautifully under the title with rounded edges\n- Tone: \"Curious, energetic, and concise – focused on discovery, usefulness, and creativity.\"\n- Format using the HTML template below, replacing placeholder items with actual content from the lists.\n- Write in PORTUGUESE BRASIL\n- Tittle is \"\"\n\n## HTML Template:\n```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>Resumo Técnico Diário</title>\n    <style>\n        body {\n            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;\n            background: #f5f5f5;\n            margin: 0;\n            padding: 16px;\n            line-height: 1.5;\n            font-size: 15px;\n            color: #333;\n        }\n        \n        .container {\n            max-width: 600px;\n            margin: 0 auto;\n            background: #ffffff;\n            border-radius: 8px;\n        }\n        \n        .header {\n            background: #000;\n            color: #fff;\n            padding: 20px 16px;\n            border-radius: 8px 8px 0 0;\n        }\n        \n        .header h1 {\n            font-size: 20px;\n            font-weight: 600;\n            margin: 0 0 4px 0;\n        }\n        \n        .header p {\n            font-size: 13px;\n            margin: 0;\n            opacity: 0.8;\n        }\n        \n        .content {\n            padding: 20px 16px;\n        }\n        \n        .section {\n            margin-bottom: 32px;\n        }\n        \n        .section:last-child {\n            margin-bottom: 0;\n        }\n        \n        .section-title {\n            font-size: 18px;\n            font-weight: 600;\n            color: #000;\n            margin: 0 0 16px 0;\n            padding-bottom: 8px;\n            border-bottom: 2px solid #000;\n        }\n        \n        .item {\n            margin-bottom: 20px;\n            padding-bottom: 20px;\n            border-bottom: 1px solid #e5e5e5;\n        }\n        \n        .item:last-child {\n            border-bottom: none;\n            margin-bottom: 0;\n            padding-bottom: 0;\n        }\n        \n        .item-title {\n            font-size: 15px;\n            font-weight: 600;\n            color: #000;\n            margin: 0 0 12px 0;\n        }\n        \n        .item-image {\n            width: 100%;\n            height: auto;\n            border-radius: 12px;\n            margin-bottom: 12px;\n            display: block;\n            object-fit: cover;\n        }\n        \n        .item-summary {\n            font-size: 14px;\n            color: #555;\n            margin: 0 0 8px 0;\n        }\n        \n        .item-link {\n            color: #0066cc;\n            text-decoration: none;\n            font-size: 14px;\n            font-weight: 500;\n        }\n        \n        .footer {\n            background: #f9f9f9;\n            padding: 16px;\n            text-align: center;\n            font-size: 12px;\n            color: #666;\n            border-radius: 0 0 8px 8px;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <div class=\"header\">\n            <h1>⚡Resumo Técnico Diário</h1>\n            <p>{current_date}</p>\n        </div>\n        \n        <div class=\"content\">\n            \n            <!-- Global & India Tech News Section -->\n            <div class=\"section\">\n                <h2 class=\"section-title\">🌍 Global Tech Innovations</h2>\n                \n                <!-- Example without Image -->\n                <div class=\"item\">\n                    <div class=\"item-title\">{News Title 2}</div>\n                    <div class=\"item-summary\">\n                        {2-3 line summary of the news}\n                    </div>\n                    <a href=\"{news_link}\" class=\"item-link\">Read more →</a>\n                </div>\n                \n                <!-- Add more items as needed -->\n            </div>\n\n\n            <!-- Tools & Products Section -->\n            <div class=\"section\">\n                <h2 class=\"section-title\">🧠 New Tools & Products</h2>             \n                \n                <!-- Example without Image -->\n                <div class=\"item\">\n                    <div class=\"item-title\">{Product Title 2}</div>\n                    <div class=\"item-summary\">\n                        {2-3 line summary of the product}\n                    </div>\n                    <a href=\"{product_link}\" class=\"item-link\">Learn more →</a>\n                </div>\n                \n                <!-- Add more items as needed -->\n            </div>\n        </div>\n        \n        <div class=\"footer\">\n            Seja curioso e continue construindo!!!\n        </div>\n    </div>\n</body>\n</html>\n```",
+        "documentUrls": "={{ $json.fileUri }}",
+        "options": {}
+      },
+      "id": "7d74d14e-b3dc-4c6d-8871-2ddf94fd2a33",
+      "name": "Analisar o Documento",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "position": [
+        592,
+        144
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "viQN4w03VCLXcskl",
+          "name": "Google Gemini API - pauloroosf@gmail.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the HTML from previous node\nlet htmlText = $input.first().json.content.parts[0].text\n// Remove all \\n characters and trim\nhtmlText = htmlText.replace(/\\n/g, \"\").trim();\n\n// Return as JSON\nreturn [{ json: { html: htmlText } }];\n"
+      },
+      "id": "a109775c-b218-41f3-a0bf-f3dd85f6cb16",
+      "name": "Código JavaScript para Formatar HTML",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        912,
+        144
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "fromEmail": "resumo@pauloroosf.dev",
+        "toEmail": "pauloroosf@hotmail.com",
+        "subject": "=⚡ Resumo Técnico Diário - {{ new Date().toLocaleDateString(\"pt-BR\", { year: \"numeric\", month: \"long\", day: \"numeric\" }) }}\n",
+        "html": "={{ $json.html.replace(/^```html/, '').replace(/```$/, '').trim() }}",
+        "options": {
+          "appendAttribution": false,
+          "attachments": "=data"
+        }
+      },
+      "id": "fffc27a1-22dd-4455-ac52-c4e38343b501",
+      "name": "Enviar E-mail",
+      "type": "n8n-nodes-base.emailSend",
+      "position": [
+        1264,
+        144
+      ],
+      "webhookId": "9c1d2a26-ab49-44a3-aea5-f13cc14ebf64",
+      "typeVersion": 2.1,
+      "credentials": {
+        "smtp": {
+          "id": "Q6BqpoPQYdUp7G1X",
+          "name": "Conta GMAIL - pauloroosf"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9a3862e2-1f9b-4640-a84c-e6bc48e03e0a",
+      "name": "Loop de 1 em 1 sites",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        -1264,
+        352
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "isoDate",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {
+          "disableDotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        -848,
+        448
+      ],
+      "id": "9c294741-4fe0-4459-9ddd-811c425e1f6c",
+      "name": "Sort isoDate",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        448
+      ],
+      "id": "6f73a4b8-6c9e-4cd9-88ac-04e792b39a5a",
+      "name": "Limit 10"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "isoDate",
+              "order": "descending"
+            }
+          ]
+        },
+        "options": {
+          "disableDotNotation": true
+        }
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        -864,
+        144
+      ],
+      "id": "4666fa83-295a-48f7-adec-9e8ea2f34c05",
+      "name": "Sort isoDate1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        144
+      ],
+      "id": "8d3bf9e3-680d-4c45-97a7-16efd03cf478",
+      "name": "Limit "
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "422bc7b7-14b9-4080-9fc2-ee23b49cf576",
+      "name": "Loop de 1 em 1 news",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [
+        -1264,
+        32
+      ],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6decfd09-3c2b-4515-9d8c-223c6cf05e8e",
+              "name": "List",
+              "value": "products_list",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -368,
+        336
+      ],
+      "id": "436131ed-ac9b-4b27-85e9-b810354b4aa5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "24a091ba-430f-4ec5-b8d5-e212cf259a94",
+              "name": "List",
+              "value": "news_list",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -384,
+        16
+      ],
+      "id": "c17949db-fbcd-4496-afcc-b81b9aabc939",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Tech News Sites": {
+      "main": [
+        [
+          {
+            "node": "Quebrar URLs News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read OF Tools": {
+      "main": [
+        [
+          {
+            "node": "Sort isoDate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read OF Tech News": {
+      "main": [
+        [
+          {
+            "node": "Sort isoDate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tools Subredit and Sites": {
+      "main": [
+        [
+          {
+            "node": "Quebrar URLs Sites",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Envio Diário as 08h": {
+      "main": [
+        [
+          {
+            "node": "Tech News Sites",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Tools Subredit and Sites",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quebrar URLs News": {
+      "main": [
+        [
+          {
+            "node": "Loop de 1 em 1 news",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Quebrar URLs Sites": {
+      "main": [
+        [
+          {
+            "node": "Loop de 1 em 1 sites",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unir as Listas": {
+      "main": [
+        [
+          {
+            "node": "Converter para CSV",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Converter para CSV": {
+      "main": [
+        [
+          {
+            "node": "Subir Arquivo no Gemini",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Subir Arquivo no Gemini": {
+      "main": [
+        [
+          {
+            "node": "Analisar o Documento",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analisar o Documento": {
+      "main": [
+        [
+          {
+            "node": "Código JavaScript para Formatar HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Código JavaScript para Formatar HTML": {
+      "main": [
+        [
+          {
+            "node": "Enviar E-mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop de 1 em 1 sites": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "RSS Read OF Tools",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort isoDate": {
+      "main": [
+        [
+          {
+            "node": "Limit 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit 10": {
+      "main": [
+        [
+          {
+            "node": "Loop de 1 em 1 sites",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort isoDate1": {
+      "main": [
+        [
+          {
+            "node": "Limit ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit ": {
+      "main": [
+        [
+          {
+            "node": "Loop de 1 em 1 news",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop de 1 em 1 news": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "RSS Read OF Tech News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Unir as Listas",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Unir as Listas",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "e8aad2b2-1d37-4540-860c-0de4ea0b0ae0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f86523e3bf374df640bad75031f7b94aa8de5bda6501e0c455f7e0c3cbf1077e"
+  },
+  "id": "fpm26GCoRRv2qCLy",
+  "tags": []
+}
